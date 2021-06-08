@@ -81,7 +81,6 @@ class DMCWrapper(core.Env):
                 environment_kwargs=environment_kwargs
             )
         else:
-            print("Hello")
             self._env = distracting_suite.load(
                 domain_name=domain_name,
                 task_name=task_name,
