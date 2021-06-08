@@ -24,9 +24,7 @@ env = dmc2gym.make(domain_name='reacher',
                    dynamic=args.dynamic,
                    )
 
-try:
-    os.stat(args.output_dir)
-except:
+if not os.path.exists(args.output_dir):
     os.mkdir(args.output_dir)
 
 done = False
