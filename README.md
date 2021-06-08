@@ -26,7 +26,7 @@ while not done:
 
 ### The Distracting Control Suite
 Support for [The Distracting Control Suite](https://github.com/google-research/google-research/tree/master/distracting_control)
-has been added by in this fork. You cen create a distracting environment by simply 
+has been added in this fork. You cen create a distracting environment by simply 
 forwarding the relevant arguments to `dmc2gym.make`. 
 Note that you should first install [this fork](https://github.com/sahandrez/distracting_control) 
 of the Distracting Control Suite. 
