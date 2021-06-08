@@ -15,7 +15,17 @@ def make(
         episode_length=1000,
         environment_kwargs=None,
         time_limit=None,
-        channels_first=True
+        channels_first=True,
+        difficulty=None,
+        dynamic=False,
+        background_dataset_path=None,
+        background_dataset_videos="train",
+        background_kwargs=None,
+        camera_kwargs=None,
+        color_kwargs=None,
+        render_kwargs=None,
+        pixels_only=True,
+        pixels_observation_key="pixels"
 ):
     env_id = 'dmc_%s_%s_%s-v1' % (domain_name, task_name, seed)
 
@@ -46,6 +56,16 @@ def make(
                 camera_id=camera_id,
                 frame_skip=frame_skip,
                 channels_first=channels_first,
+                difficulty=difficulty,
+                dynamic=dynamic,
+                background_dataset_path=background_dataset_path,
+                background_dataset_videos=background_dataset_videos,
+                background_kwargs=background_kwargs,
+                camera_kwargs=camera_kwargs,
+                color_kwargs=color_kwargs,
+                render_kwargs=render_kwargs,
+                pixels_only=pixels_only,
+                pixels_observation_key=pixels_observation_key
             ),
             max_episode_steps=max_episode_steps,
         )

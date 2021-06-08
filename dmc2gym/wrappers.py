@@ -1,12 +1,13 @@
 from gym import core, spaces
 from dm_control import suite
+from distracting_control import suite as distracting_suite
 from dm_env import specs
 import numpy as np
 
 
 def _spec_to_box(spec):
     def extract_min_max(s):
-        assert s.dtype == np.float64 or s.dtype == np.float32
+        assert s.dtype == np.float64 or s.dtype == np.float32 or s.dtype == np.uint8
         dim = np.int(np.prod(s.shape))
         if type(s) == specs.Array:
             bound = np.inf * np.ones(dim, dtype=np.float32)
@@ -36,20 +37,32 @@ def _flatten_obs(obs):
 
 class DMCWrapper(core.Env):
     def __init__(
-        self,
-        domain_name,
-        task_name,
-        task_kwargs=None,
-        visualize_reward={},
-        from_pixels=False,
-        height=84,
-        width=84,
-        camera_id=0,
-        frame_skip=1,
-        environment_kwargs=None,
-        channels_first=True
+            self,
+            domain_name,
+            task_name,
+            task_kwargs=None,
+            visualize_reward=False,
+            from_pixels=False,
+            height=84,
+            width=84,
+            camera_id=0,
+            frame_skip=1,
+            environment_kwargs=None,
+            channels_first=True,
+            difficulty=None,
+            dynamic=False,
+            background_dataset_path=None,
+            background_dataset_videos="train",
+            background_kwargs=None,
+            camera_kwargs=None,
+            color_kwargs=None,
+            render_kwargs=None,
+            pixels_only=True,
+            pixels_observation_key="pixels"
     ):
         assert 'random' in task_kwargs, 'please specify a seed, for deterministic behaviour'
+        if difficulty is not None:
+            assert from_pixels
         self._from_pixels = from_pixels
         self._height = height
         self._width = width
@@ -58,13 +71,34 @@ class DMCWrapper(core.Env):
         self._channels_first = channels_first
 
         # create task
-        self._env = suite.load(
-            domain_name=domain_name,
-            task_name=task_name,
-            task_kwargs=task_kwargs,
-            visualize_reward=visualize_reward,
-            environment_kwargs=environment_kwargs
-        )
+        if difficulty is None:
+            # standard DM Control Suite
+            self._env = suite.load(
+                domain_name=domain_name,
+                task_name=task_name,
+                task_kwargs=task_kwargs,
+                visualize_reward=visualize_reward,
+                environment_kwargs=environment_kwargs
+            )
+        else:
+            print("Hello")
+            self._env = distracting_suite.load(
+                domain_name=domain_name,
+                task_name=task_name,
+                task_kwargs=task_kwargs,
+                visualize_reward=visualize_reward,
+                environment_kwargs=environment_kwargs,
+                difficulty=difficulty,
+                dynamic=dynamic,
+                background_dataset_path=background_dataset_path,
+                background_dataset_videos=background_dataset_videos,
+                background_kwargs=background_kwargs,
+                camera_kwargs=camera_kwargs,
+                color_kwargs=color_kwargs,
+                render_kwargs=render_kwargs,
+                pixels_only=pixels_only,
+                pixels_observation_key=pixels_observation_key
+            )
 
         # true and normalized action spaces
         self._true_action_space = _spec_to_box([self._env.action_spec()])
