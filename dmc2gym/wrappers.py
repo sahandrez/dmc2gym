@@ -61,6 +61,7 @@ class DMCWrapper(core.Env):
             pixels_observation_key="pixels"
     ):
         assert 'random' in task_kwargs, 'please specify a seed, for deterministic behaviour'
+        difficulty = None if difficulty == 'none' else difficulty
         if difficulty is not None:
             assert from_pixels
         self._from_pixels = from_pixels
@@ -71,16 +72,8 @@ class DMCWrapper(core.Env):
         self._channels_first = channels_first
 
         # create task
-        if difficulty is None:
-            # standard DM Control Suite
-            self._env = suite.load(
-                domain_name=domain_name,
-                task_name=task_name,
-                task_kwargs=task_kwargs,
-                visualize_reward=visualize_reward,
-                environment_kwargs=environment_kwargs
-            )
-        else:
+        if difficulty or background_kwargs or camera_kwargs or color_kwargs:
+            # Distracting Control Suite
             self._env = distracting_suite.load(
                 domain_name=domain_name,
                 task_name=task_name,
@@ -97,6 +90,15 @@ class DMCWrapper(core.Env):
                 render_kwargs=render_kwargs,
                 pixels_only=pixels_only,
                 pixels_observation_key=pixels_observation_key
+            )
+        else:
+            # standard DM Control Suite
+            self._env = suite.load(
+                domain_name=domain_name,
+                task_name=task_name,
+                task_kwargs=task_kwargs,
+                visualize_reward=visualize_reward,
+                environment_kwargs=environment_kwargs
             )
 
         # true and normalized action spaces

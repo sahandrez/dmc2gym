@@ -20,6 +20,7 @@ env = dmc2gym.make(domain_name='reacher',
                    visualize_reward=False,
                    height=84, width=84,
                    difficulty=args.difficulty,
+                   background_kwargs={'video_alpha': 0.4, 'num_videos': 4, 'ground_plane_alpha': 0.0},
                    background_dataset_path=os.path.expanduser(args.davis_path),
                    dynamic=args.dynamic,
                    )
